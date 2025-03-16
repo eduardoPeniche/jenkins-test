@@ -32,5 +32,10 @@ pipeline {
             archiveArtifacts artifacts: 'build/reports/**/*.xml', allowEmptyArchive: true
             junit 'build/reports/**/*.xml'
         }
+        success {
+            mail to: 'peniche1593@gmail.com',
+                 subject: "Success Pipeline: ${currentBuild.fullDisplayName}",
+                 body: "Success with ${env.BUILD_URL}"
+        }
     }
 }
