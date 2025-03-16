@@ -5,8 +5,8 @@ pipeline {
     stages {
         stage('Setup') {
             steps {
-                // Install Mocha and JUnit reporter
-                sh 'npm install -g mocha mocha-junit-reporter'
+                // Install locally instead of globally
+                sh 'npm install mocha mocha-junit-reporter'
                 // Create a simple test file
                 sh '''
                     mkdir -p test
@@ -22,16 +22,14 @@ pipeline {
         }
         stage('Test') {
             steps {
-                // Run Mocha with JUnit reporter, output XML to build/reports
-                sh 'mocha test/sample.test.js --reporter mocha-junit-reporter --reporter-options mochaFile=build/reports/test-results.xml'
+                // Run Mocha from local node_modules
+                sh './node_modules/.bin/mocha test/sample.test.js --reporter mocha-junit-reporter --reporter-options mochaFile=build/reports/test-results.xml'
             }
         }
     }
     post {
         always {
-            // Archive the XML reports
             archiveArtifacts artifacts: 'build/reports/**/*.xml', allowEmptyArchive: true
-            // Process JUnit reports
             junit 'build/reports/**/*.xml'
         }
     }
